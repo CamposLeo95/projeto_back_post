@@ -13,4 +13,8 @@ routes.delete('/users/:id', userController.delete.bind(userController))
 
 routes.post('/login', login )
 
+routes.get('/products', (req, res)=>{
+    res.send('Hello world')
+})
+
 export { routes }

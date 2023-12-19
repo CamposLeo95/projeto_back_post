@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { UsersServices } from "../services/UserService";
 
 type userDataProps = {
-    name: string
+    name:  string
     email: string
     senha: string
 }

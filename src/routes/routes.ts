@@ -1,20 +1,23 @@
 import { Router } from "express";
 import { UsersControllers } from "../controllers/UserController";
-import { login } from "../utils/login";
+import { PostController } from "../controllers/PostController";
+import { login, verifyToken } from "../utils/login";
 
 const userController = new UsersControllers()
+const postController = new PostController()
 
 const routes = Router()
 
 routes.get('/users', userController.list.bind(userController))
+routes.get('/users/:id', userController.findUser.bind(userController))
 routes.post('/users', userController.create.bind(userController))
 routes.put('/users/:id', userController.update.bind(userController))
 routes.delete('/users/:id', userController.delete.bind(userController))
 
 routes.post('/login', login )
 
-routes.get('/products', (req, res)=>{
-    res.send('Hello world')
-})
+routes.get('/posts', postController.list.bind(postController))
+routes.post('/posts', verifyToken , postController.create.bind(postController))
+
 
 export { routes }

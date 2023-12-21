@@ -12,6 +12,16 @@ model User {
   email   String  @unique
   name    String
   senha   String 
+  admin   Boolean @default(false)
+  posts   Post[]
 
   @@map("users")
+}
+
+model Post {
+  id        Int     @id   @default(autoincrement())
+  title     String
+  content   String
+  userId    Int
+  user      User    @relation(fields: [userId], references: [id])
 }

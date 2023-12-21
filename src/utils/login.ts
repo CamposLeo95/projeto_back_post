@@ -11,9 +11,10 @@ const prisma = new PrismaClient()
 const chaveSecreta = process.env.JWT_SECRET || 'chave_padrao_secreta';
 
 export async function login(req: Request, res: Response){
-    const {email, senha} = req.body
-
+   
     try { 
+        const {email, senha} = req.body
+    
         const user = await prisma.user.findUnique({ where: { email } })
     
         if(user && (await bcrypt.compare(senha, user.senha))){

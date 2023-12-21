@@ -9,7 +9,7 @@ class PostController {
 
     private postService = new PostService()
 
-    async create (req: AuthRequest, res: Response) {
+    async create (req: AuthRequest, res: Response): Promise<Response<any, Record<string, any>>> {
         try {
             const dataPosts = req.body
             const {userId} = req.userId
@@ -27,11 +27,25 @@ class PostController {
             return res.status(result.status).json({message: result.message, post: result.post})
             
         } catch (error) {
-            res.status(500).json(error)
+            return res.status(500).json(error)
         }
     }
+
+    async update(req: AuthRequest, res: Response){
+        const dataPost = req.body
+        const idPost = Number(req.params.id)
+        const {userId} = req.userId 
+
+        const {status, message, post} = await this.postService.update(idPost, dataPost, userId)
+
+        if(!post){
+            return res.status(400).json({message: "Erro ao editar post"})
+        }
+
+        return res.status(status).json(message)
+    }
     
-    async list (req: Request, res: Response){
+    async list (req: Request, res: Response): Promise<void>{
         const result = await this.postService.list()
 
         result && res.status(result.status).json(result.posts)

@@ -43,6 +43,42 @@ class PostService {
         
     }
 
+    async update(idPost: number, dataPost:postsProps, userId: number ){
+        try {
+            const {title, content} = dataPost
+    
+            if(!title && !content){
+                return {status: 403, message: "Insira ao menos um campo"}
+            }
+
+            const findPost = await this.prisma.post.findUnique({
+                where: {
+                    id: idPost,
+                    userId
+                }
+            })
+
+            if(!findPost){
+                return {status: 404, message: "post não encontrado"}
+            }
+    
+            const post = await this.prisma.post.update({
+                where: {
+                    id: idPost,
+                    userId
+                },
+                data:{
+                    title,
+                    content
+                }
+            })
+    
+            return {status: 200, message: "Post atualizado com sucesso", post}
+        } catch (error) {
+            throw error
+        }
+    }
+
     async list (){
         const posts = await this.prisma.post.findMany({ include:{ user: true } })
 

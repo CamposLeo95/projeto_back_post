@@ -18,6 +18,7 @@ routes.post('/login', login )
 
 routes.get('/posts', postController.list.bind(postController))
 routes.post('/posts', verifyToken , postController.create.bind(postController))
+routes.put('/posts/:id', verifyToken, postController.update.bind(postController))
 
 
 export { routes }

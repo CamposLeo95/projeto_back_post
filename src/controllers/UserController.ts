@@ -5,6 +5,7 @@ type userDataProps = {
     name:  string
     email: string
     senha: string
+    admin?: boolean
 }
 
 export class UsersControllers {
@@ -20,9 +21,26 @@ export class UsersControllers {
         }
     }
 
+    async findUser(req: Request, res: Response){
+        try {
+            const idUser = Number(req.params.id)
+
+            const result = await this.userService.findUser(idUser)
+
+            if(!result){
+                res.status(400).json({message: "Nenhum resultado"})
+            }
+
+            res.status(200).json(result)
+        } catch (error) {
+            throw error
+        }
+        
+    }
+
     async create(req: Request, res: Response){
         try {
-            const dataUsers: userDataProps = req.body
+            const dataUsers:userDataProps = req.body
             const result = await this.userService.create(dataUsers)
 
             result && res.status(result.status).json({message: result.message})

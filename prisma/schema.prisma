@@ -8,20 +8,26 @@ datasource db {
 }
 
 model User {
-  id      Int     @id     @default(autoincrement())
-  email   String  @unique
-  name    String
-  senha   String 
-  admin   Boolean @default(false)
-  posts   Post[]
+  id          Int       @id     @default(autoincrement())
+  email       String    @unique
+  name        String
+  senha       String 
+  admin       Boolean   @default(false)
+  posts       Post[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt @default(now())
 
   @@map("users")
 }
 
 model Post {
-  id        Int     @id   @default(autoincrement())
+  id        Int       @id   @default(autoincrement())
   title     String
   content   String
   userId    Int
-  user      User    @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  updated   DateTime  @updatedAt @default(now())
+  
+  @@map("posts")
 }

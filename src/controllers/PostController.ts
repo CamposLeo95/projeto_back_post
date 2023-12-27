@@ -32,9 +32,14 @@ class PostController {
     }
     
     async list (req: Request, res: Response){
-        const result = await this.postService.list()
-
-        result && res.status(result.status).json(result.posts)
+        try {
+            const result = await this.postService.list()
+    
+            return res.status(result.status).json(result.posts)
+            
+        } catch (error) {
+            
+        }
     }
 }
 

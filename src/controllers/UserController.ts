@@ -28,10 +28,10 @@ export class UsersControllers {
             const result = await this.userService.findUser(idUser)
 
             if(!result){
-                res.status(400).json({message: "Nenhum resultado"})
+                return res.status(400).json({message: "Nenhum resultado"})
             }
 
-            res.status(200).json(result)
+            return res.status(200).json(result)
         } catch (error) {
             throw error
         }

@@ -50,7 +50,7 @@ class PostService {
             return {status:404, message: "nenhum post encontrado"}
         }
 
-        return {status: 200, posts}
+        return {status: 201, posts}
     }
 }
 

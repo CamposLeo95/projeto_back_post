@@ -52,7 +52,19 @@ class PostController {
             return res.status(result.status).json(result.posts)
 
         } catch (error) {
+            return res.status(500).json({ message: "error interno" })
 
+        }
+    }
+
+    async delete(req: Request, res: Response) {
+        const idPost = Number(req.params.id)
+        try {
+            const result = await this.postService.delete(idPost)
+
+            return res.status(result.status).json(result.message)
+        } catch (error) {
+            return res.status(500).json({ message: "error interno" })
         }
     }
 }

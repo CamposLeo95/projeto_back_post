@@ -15,11 +15,12 @@ routes.post('/users', userController.create.bind(userController))
 routes.put('/users/:id', userController.update.bind(userController))
 routes.delete('/users/:id', userController.delete.bind(userController))
 
-routes.post('/login', login )
+routes.post('/login', login)
 
-routes.get('/posts', verifyToken , postController.list.bind(postController))
-routes.post('/posts', verifyToken , postController.create.bind(postController))
+routes.get('/posts', verifyToken, postController.list.bind(postController))
+routes.post('/posts', verifyToken, postController.create.bind(postController))
 routes.put('/posts/:id', verifyToken, postController.update.bind(postController))
+routes.delete('/posts/:id', verifyToken, postController.delete.bind(postController))
 
 
 export { routes }

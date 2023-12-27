@@ -9,18 +9,18 @@ class PostService {
 
     private prisma = new PrismaClient()
 
-    async create (dataPost: postsProps, idUser: number) {
+    async create(dataPost: postsProps, idUser: number) {
         try {
             const { title, content } = dataPost
 
-            if(!title && !content){
-                return {status: 400, message: "Titulo ou conteudo pendente!"}
+            if (!title && !content) {
+                return { status: 400, message: "Titulo ou conteudo pendente!" }
             }
 
-            const user = await this.prisma.user.findUnique({where:{id: idUser}})
+            const user = await this.prisma.user.findUnique({ where: { id: idUser } })
 
-            if(!user){
-                return {status: 404, message: "Usuario não cadastrado"}
+            if (!user) {
+                return { status: 404, message: "Usuario não cadastrado" }
             }
 
             const post = await this.prisma.post.create({
@@ -30,25 +30,25 @@ class PostService {
                     userId: idUser
                 }
             })
-            
-            if(!post){
-                return {status: 400, message: "Erro ao criar post"}
+
+            if (!post) {
+                return { status: 400, message: "Erro ao criar post" }
             }
 
-            return {status: 201, message: "Post criado com sucesso", post}
+            return { status: 201, message: "Post criado com sucesso", post }
 
         } catch (error) {
             throw error
         }
-        
+
     }
 
-    async update(idPost: number, dataPost:postsProps, userId: number ){
+    async update(idPost: number, dataPost: postsProps, userId: number) {
         try {
-            const {title, content} = dataPost
-    
-            if(!title && !content){
-                return {status: 403, message: "Insira ao menos um campo"}
+            const { title, content } = dataPost
+
+            if (!title && !content) {
+                return { status: 403, message: "Insira ao menos um campo" }
             }
 
             const findPost = await this.prisma.post.findUnique({
@@ -58,35 +58,61 @@ class PostService {
                 }
             })
 
-            if(!findPost){
-                return {status: 404, message: "post não encontrado"}
+            if (!findPost) {
+                return { status: 404, message: "post não encontrado" }
             }
-    
+
             const post = await this.prisma.post.update({
                 where: {
                     id: idPost,
                     userId
                 },
-                data:{
+                data: {
                     title,
                     content
                 }
             })
-    
-            return {status: 200, message: "Post atualizado com sucesso", post}
+
+            return { status: 200, message: "Post atualizado com sucesso", post }
         } catch (error) {
             throw error
         }
     }
 
-    async list (){
-        const posts = await this.prisma.post.findMany({ include:{ user: true } })
+    async list() {
+        const posts = await this.prisma.post.findMany({ include: { user: true } })
 
-        if(!posts){
-            return {status:404, message: "nenhum post encontrado"}
+        if (!posts) {
+            return { status: 404, message: "nenhum post encontrado" }
         }
 
-        return {status: 201, posts}
+        return { status: 201, posts }
+    }
+
+    async delete(id: number) {
+        try {
+
+            const findPost = await this.prisma.post.findUnique({
+                where: {
+                    id: id
+                }
+            })
+
+            if (!findPost) {
+                return { status: 404, message: "usuario não encontrado" }
+            }
+
+            await this.prisma.post.delete({
+                where: {
+                    id: id
+                }
+            })
+
+            return { status: 203, message: "Post deletado" }
+
+        } catch (error) {
+            throw new Error('Erro ao pagar post')
+        }
     }
 }
 

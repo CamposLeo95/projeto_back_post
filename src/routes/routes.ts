@@ -8,7 +8,6 @@ const postController = new PostController()
 
 const routes = Router()
 
-
 routes.get('/users', userController.list.bind(userController))
 routes.get('/users/:id', userController.findUser.bind(userController))
 routes.post('/users', userController.create.bind(userController))

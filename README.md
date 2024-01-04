@@ -1,4 +1,4 @@
-# Code Burger - BackEnd
+# Postes - BackEnd
 
 Este é a parte backend de um projeto desenvolvido baseado em um mural de comunicados. Visando implementar um sistema que permita a criação de usuarios administrativos ou não, que com base em seus respectivos acessos podem criar, alterar ou até mesmo deletar um poste.
 

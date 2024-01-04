@@ -23,7 +23,7 @@ Este é a parte backend de um projeto desenvolvido baseado em um mural de comuni
 Faça o clone do repositório 
 
 ```bash
-git clone https://github.com/CamposLeo95/code_burger_dev_club.git
+git clone https://github.com/CamposLeo95/projeto_back_post.git
 
 ```
 

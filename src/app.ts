@@ -1,6 +1,7 @@
+import path from "node:path";
+import cors from 'cors'
 import express from "express";
 import { routes } from "./routes/routes";
-import cors from 'cors'
 
 export class App{
 
@@ -15,6 +16,7 @@ export class App{
     middlewares(){
         this.app.use(express.json())
         this.app.use(cors())
+        this.app.use("/uploads", express.static(path.join(__dirname, "uploads")));
     }
 
     routes(){

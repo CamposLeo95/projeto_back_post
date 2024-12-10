@@ -1,72 +1,86 @@
-import { Request, Response } from "express"
-import { PostService } from "../services/PostService"
+import type { Request, Response } from "express";
+import { PostService } from "../services/PostService";
 
 interface AuthRequest extends Request {
-    userId?: any
+	userId: string ;
 }
 
 class PostController {
+	private postService = new PostService();
 
-    private postService = new PostService()
+	async create(req: Request, res: Response) {
+		try {
+			const dataPosts = req.body;
+			const userId = req.headers.userid;
+			const imagePath = req?.file?.path;
 
-    async create(req: AuthRequest, res: Response): Promise<Response<any, Record<string, any>>> {
-        try {
-            const dataPosts = req.body
-            const { userId } = req.userId
+			if (!userId) {
+				return res.status(404).json({ message: "Usuario não encontrado" });
+			}
 
-            if (!userId) {
-                return res.status(404).json({ message: "Usuario não encontrado" })
-            }
+			if (!dataPosts) {
+				return res.status(404).json({ message: "Post não encontrado" });
+			}
 
-            const result = await this.postService.create(dataPosts, userId)
+			if (!imagePath) {
+				return res.status(404).json({ message: "Imagem não encontrada" });
+			}
 
-            if (!result.post) {
-                return res.status(result.status).json(result.message)
-            }
+		
+			const result = await this.postService.create(dataPosts, Number(userId), imagePath);
 
-            return res.status(result.status).json({ message: result.message, post: result.post })
 
-        } catch (error) {
-            return res.status(500).json(error)
-        }
-    }
 
-    async update(req: AuthRequest, res: Response) {
-        const dataPost = req.body
-        const idPost = Number(req.params.id)
-        const { userId } = req.userId
+			if (!result.post) {
+				return res.status(result.status).json(result.message);
+			}
 
-        const { status, message, post } = await this.postService.update(idPost, dataPost, userId)
+			return res
+				.status(result.status)
+				.json({ message: result.message, post: result.post });
+		} catch (error) {
+			return res.status(500).json(error);
+		}
+	}
 
-        if (!post) {
-            return res.status(400).json({ message: "Erro ao editar post" })
-        }
+	async update(req: Request, res: Response) {
+		const dataPost = req.body;
+		const idPost = Number(req.params.id);
+		const userId = req.headers.userid;
 
-        return res.status(status).json(message)
-    }
+		const { status, message, post } = await this.postService.update(
+			idPost,
+			dataPost,
+			Number(userId),
+		);
 
-    async list(req: Request, res: Response) {
-        try {
-            const result = await this.postService.list()
+		if (!post) {
+			return res.status(400).json({ message: "Erro ao editar post" });
+		}
 
-            return res.status(result.status).json(result.posts)
+		return res.status(status).json(message);
+	}
 
-        } catch (error) {
-            return res.status(500).json({ message: "error interno" })
+	async list(_: Request, res: Response) {
+		try {
+			const result = await this.postService.list();
 
-        }
-    }
+			return res.status(result.status).json(result.posts);
+		} catch (error) {
+			return res.status(500).json({ message: "error interno" });
+		}
+	}
 
-    async delete(req: Request, res: Response) {
-        const idPost = Number(req.params.id)
-        try {
-            const result = await this.postService.delete(idPost)
+	async delete(req: Request, res: Response) {
+		const idPost = Number(req.params.id);
+		try {
+			const result = await this.postService.delete(idPost);
 
-            return res.status(result.status).json(result.message)
-        } catch (error) {
-            return res.status(500).json({ message: "error interno" })
-        }
-    }
+			return res.status(result.status).json(result.message);
+		} catch (error) {
+			return res.status(500).json({ message: "error interno" });
+		}
+	}
 }
 
-export { PostController }
+export { PostController };

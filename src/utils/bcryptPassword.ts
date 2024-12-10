@@ -7,15 +7,15 @@ export async function  hashPassword(senha: string): Promise<string> {
         const hash = await bcrypt.hash(senha, saltRounds)
         return hash
     } catch (error) {
-        throw error
+        throw new Error('Erro ao gerar hash ${error}')
     }
 }
 
-export async function verifyPassword(senha: string, hash: any): Promise<boolean>{
+export async function verifyPassword(senha: string, hash: string): Promise<boolean>{
     try {
         const match = await bcrypt.compare(senha, hash)
         return match
     } catch (error) {
-        throw error
+        throw new Error('Erro ao verificar senha ${error}')
     }
 }

@@ -21,7 +21,7 @@ export class UsersServices{
             }
             return {status: 404, message: "sem usuarios cadastrados" }   
         } catch (error) {
-            throw error
+            throw new Error('Erro ao listar usuario ${error}', )	
         }
     }
 
@@ -39,7 +39,7 @@ export class UsersServices{
             return {status: 200, user}
 
         }catch(error){
-            throw error
+            throw new Error('Erro ao encontrar usuario ${error}', )	
         }
     }
 
@@ -48,13 +48,13 @@ export class UsersServices{
             const {name, email, senha, admin} = dataUsers
 
             if (!name || !email || !senha) {
-                return {status: 400, message: `preencha todos os campos`}
+                return {status: 400, message: 'preencha todos os campos'}
             } 
             
             const existingUser = await this.prisma.user.findUnique({ where:{ email: email } })
 
             if (existingUser) {
-                return { status: 400, message: `usuario ${email}, já cadastrado`}
+                return { status: 400, message: 'usuario ${email}, já cadastrado'}
             } 
 
             const passwordHash = await hashPassword(senha)
@@ -69,28 +69,29 @@ export class UsersServices{
             })
 
             if(user){
-                return {status: 201, message: `usuario ${user.email}, cadastrado com sucesso`}  
+                return {status: 201, message: 'usuario ${user.email}, cadastrado com sucesso'}  
             }
 
-            return {status: 400, message: `erro ao cadastrar usuario com sucesso`}  
+            return {status: 400, message: 'erro ao cadastrar usuario com sucesso'}  
 
                        
-        }  catch (error:any) {   
-            throw error
+        }  catch (error) {   
+            throw new Error('Erro ao criar usuario: ${error}', )	
         }
     }
 
     async update(idUser: number, {name, email, senha, admin}: DataUsersProps){
+        // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
         let passwordHash
         try {
             if(!name && !email && !senha){
-                return {status: 400, message: `Informe ao menos algum dado para atualizar`}
+                return {status: 400, message: 'Informe ao menos algum dado para atualizar'}
             }
 
             const userFind = await this.prisma.user.findUnique({ where: { id: idUser } })
 
             if(!userFind){
-                return {status: 404, message: `Usuario não encontrado`}
+                return {status: 404, message: 'Usuario não encontrado'}
             }
 
             if(senha){
@@ -108,12 +109,12 @@ export class UsersServices{
             })
             
             if(userUpdate){
-                return {status: 203, message: `usuario atualizado com sucesso`, userUpdate}
+                return {status: 203, message: 'usuario atualizado com sucesso', userUpdate}
             }
-            return {status: 400, message: `erro ao atualizar o usuario`, userUpdate}
+            return {status: 400, message: 'erro ao atualizar o usuario', userUpdate}
 
         } catch (error) {
-            throw error
+            throw new Error(`Erro ao atualizar usuario ${error}`, )	
         }
     }
 
@@ -122,15 +123,15 @@ export class UsersServices{
             const userFind = await this.prisma.user.findUnique({ where: { id: idUser } })
 
             if(!userFind){
-                return {status: 404, message: `Usuario não encontrado`}
+                return {status: 404, message: 'Usuario não encontrado'}
             }
 
             await this.prisma.user.delete({ where: { id: idUser } })
 
-            return {status: 203, message: `Usuario deletado com sucesso`}
+            return {status: 203, message: 'Usuario deletado com sucesso'}
             
         } catch (error) {
-            throw error
+            throw new Error(`Erro ao deletar usuario ${error}`, )	
         }
     }
 }

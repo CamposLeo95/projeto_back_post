@@ -1,8 +1,9 @@
 import type { Request, Response } from "express";
+import { jwtDecode } from "jwt-decode";
 import { CommentService } from "../services/CommentService";
 
 interface AuthRequest extends Request {
-	userId: string ;
+	userId: string;
 	postId: string;
 }
 
@@ -11,10 +12,11 @@ class CommentController {
 
 	async create(req: Request, res: Response) {
 		try {
-			const content = req.body;
-			const userId = req.headers.userid;
+			const { content } = req.body;
+			const token = req.headers.authorization?.split(" ")[1];
 			const postId = req.params.idPost;
 
+			const userId = jwtDecode<{ userId: number }>(token || "")?.userId;
 
 			if (!userId) {
 				return res.status(404).json({ message: "Usuario não encontrado" });
@@ -24,7 +26,11 @@ class CommentController {
 				return res.status(404).json({ message: "Post não encontrado" });
 			}
 
-			const result = await this.commentService.create(content, Number(userId), Number(postId));
+			const result = await this.commentService.create(
+				content,
+				Number(userId),
+				Number(postId),
+			);
 
 			if (!result.comment) {
 				return res.status(result.status).json(result.message);
@@ -56,17 +62,17 @@ class CommentController {
 		return res.status(status).json(message);
 	}
 
-async listCommentsByIdPost(req: Request, res: Response) {
-
+	async listCommentsByIdPost(req: Request, res: Response) {
 		try {
-			const result = await this.commentService.listCommentsByPostId(req.params.idPost);
+			const result = await this.commentService.listCommentsByPostId(
+				req.params.idPost,
+			);
 
 			return res.status(200).json(result);
 		} catch (error) {
 			return res.status(500).json({ message: "error interno" });
 		}
 	}
-
 
 	async delete(req: Request, res: Response) {
 		const idComment = Number(req.params.id);

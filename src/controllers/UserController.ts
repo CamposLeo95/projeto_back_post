@@ -38,13 +38,14 @@ export class UsersControllers {
 
 			return res.status(200).json(result);
 		} catch (error) {
-			throw new Error(`Erro ao encontrar o usuario ${error}`, )	
+			throw new Error(`Erro ao encontrar o usuario ${error}`);
 		}
 	}
 
 	async create(req: Request, res: Response): Promise<void> {
 		try {
 			const dataUsers: userDataProps = req.body;
+
 			const result = await this.userService.create(dataUsers);
 
 			result && res.status(result.status).json({ message: result.message });

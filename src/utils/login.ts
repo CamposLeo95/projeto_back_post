@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
-import { NextFunction, type Request, type Response } from "express";
+import type { Request, Response } from "express";
 import jwt, { type JwtPayload } from "jsonwebtoken";
 
 interface AuthRequest extends Request {
@@ -18,13 +18,12 @@ export async function login(req: Request, res: Response) {
 
 		if (user && (await bcrypt.compare(senha, user.senha))) {
 			const token = jwt.sign({ userId: user.id }, chaveSecreta, {
-				expiresIn: "1h",
+				expiresIn: "8h",
 			});
 			return res.status(200).json({ token, id: user.id });
-		} 
-		
-        return res.status(401).json({ message: "Credenciais inválidas" });
-	
+		}
+
+		return res.status(401).json({ message: "Credenciais inválidas" });
 	} catch (error) {
 		throw new Error(`Erro ao fazer login ${error}`);
 	}

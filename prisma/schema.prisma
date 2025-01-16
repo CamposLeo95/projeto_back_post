@@ -17,6 +17,7 @@ model User {
   comments    Comment[]
   likes       Like[]
   image       String?
+  cover       String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt @default(now())
 
@@ -58,8 +59,6 @@ model Like {
   user      User      @relation(fields: [userId], references: [id])
   createdAt DateTime  @default(now())
   updated   DateTime  @updatedAt @default(now())
-
-
 
   @@unique([userId, postId])
 

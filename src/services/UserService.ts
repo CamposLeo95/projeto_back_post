@@ -2,136 +2,150 @@ import { PrismaClient } from "@prisma/client";
 import { hashPassword } from "../utils/bcryptPassword";
 
 type DataUsersProps = {
-    name: string
-    email: string
-    senha: string
-    admin?: boolean
-}
+	name: string;
+	email: string;
+	senha: string;
+	admin?: boolean;
+};
 
-export class UsersServices{
+export class UsersServices {
+	private prisma = new PrismaClient();
 
-    private prisma = new PrismaClient()
+	async list() {
+		try {
+			const users = await this.prisma.user.findMany();
 
-    async list () {
-        try {
-            const users = await this.prisma.user.findMany()
+			if (users) {
+				return { status: 200, users };
+			}
+			return { status: 404, message: "sem usuarios cadastrados" };
+		} catch (error) {
+			throw new Error("Erro ao listar usuario ${error}");
+		}
+	}
 
-            if(users){
-                return {status: 200, users }   
-            }
-            return {status: 404, message: "sem usuarios cadastrados" }   
-        } catch (error) {
-            throw new Error('Erro ao listar usuario ${error}', )	
-        }
-    }
+	async findUser(idUser: number) {
+		try {
+			if (!idUser) {
+				return { status: 400, message: "Usuário não informado" };
+			}
+			const user = await this.prisma.user.findFirst({ where: { id: idUser } });
 
-    async findUser(idUser: number){
-        try{
-            if(!idUser){
-                return {status: 400, message: "Usuário não informado"}
-            }
-            const user = await this.prisma.user.findUnique({ where:{ id: idUser } })
+			if (!user) {
+				return { status: 404, message: "usuário não encontrado" };
+			}
 
-            if(!user){
-                return {status: 404, message: "usuário não encontrado"}
-            }
+			return { status: 200, user };
+		} catch (error) {
+			throw new Error("Erro ao encontrar usuario ${error}");
+		}
+	}
 
-            return {status: 200, user}
+	async create(dataUsers: DataUsersProps) {
+		try {
+			const { name, email, senha, admin } = dataUsers;
 
-        }catch(error){
-            throw new Error('Erro ao encontrar usuario ${error}', )	
-        }
-    }
+			if (!name || !email || !senha) {
+				return { status: 400, message: "preencha todos os campos" };
+			}
 
-    async create(dataUsers: DataUsersProps){ 
-        try { 
-            const {name, email, senha, admin} = dataUsers
+			const existingUser = await this.prisma.user.findUnique({
+				where: { email: email },
+			});
 
-            if (!name || !email || !senha) {
-                return {status: 400, message: 'preencha todos os campos'}
-            } 
-            
-            const existingUser = await this.prisma.user.findUnique({ where:{ email: email } })
+			if (existingUser) {
+				return { status: 400, message: "usuario ${email}, já cadastrado" };
+			}
 
-            if (existingUser) {
-                return { status: 400, message: 'usuario ${email}, já cadastrado'}
-            } 
+			const passwordHash = await hashPassword(senha);
 
-            const passwordHash = await hashPassword(senha)
+			const user = await this.prisma.user.create({
+				data: {
+					name,
+					email,
+					senha: passwordHash,
+					admin,
+				},
+			});
 
-            const user = await this.prisma.user.create({
-                data:{
-                    name,
-                    email,
-                    senha: passwordHash,
-                    admin
-                }
-            })
+			if (user) {
+				return {
+					status: 201,
+					message: "usuario ${user.email}, cadastrado com sucesso",
+				};
+			}
 
-            if(user){
-                return {status: 201, message: 'usuario ${user.email}, cadastrado com sucesso'}  
-            }
+			return { status: 400, message: "erro ao cadastrar usuario com sucesso" };
+		} catch (error) {
+			throw new Error("Erro ao criar usuario: ${error}");
+		}
+	}
 
-            return {status: 400, message: 'erro ao cadastrar usuario com sucesso'}  
+	async update(idUser: number, { name, email, senha, admin }: DataUsersProps) {
+		// biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
+		let passwordHash;
+		try {
+			if (!name && !email && !senha) {
+				return {
+					status: 400,
+					message: "Informe ao menos algum dado para atualizar",
+				};
+			}
 
-                       
-        }  catch (error) {   
-            throw new Error('Erro ao criar usuario: ${error}', )	
-        }
-    }
+			const userFind = await this.prisma.user.findUnique({
+				where: { id: idUser },
+			});
 
-    async update(idUser: number, {name, email, senha, admin}: DataUsersProps){
-        // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
-        let passwordHash
-        try {
-            if(!name && !email && !senha){
-                return {status: 400, message: 'Informe ao menos algum dado para atualizar'}
-            }
+			if (!userFind) {
+				return { status: 404, message: "Usuario não encontrado" };
+			}
 
-            const userFind = await this.prisma.user.findUnique({ where: { id: idUser } })
+			if (senha) {
+				passwordHash = await hashPassword(senha);
+			}
 
-            if(!userFind){
-                return {status: 404, message: 'Usuario não encontrado'}
-            }
+			const userUpdate = await this.prisma.user.update({
+				where: { id: idUser },
+				data: {
+					name,
+					email,
+					senha: passwordHash,
+					admin,
+				},
+			});
 
-            if(senha){
-                passwordHash = await hashPassword(senha)
-            }
+			if (userUpdate) {
+				return {
+					status: 203,
+					message: "usuario atualizado com sucesso",
+					userUpdate,
+				};
+			}
+			return {
+				status: 400,
+				message: "erro ao atualizar o usuario",
+				userUpdate,
+			};
+		} catch (error) {
+			throw new Error(`Erro ao atualizar usuario ${error}`);
+		}
+	}
 
-            const userUpdate = await this.prisma.user.update({
-                where: { id: idUser },
-                data: {
-                    name,
-                    email,
-                    senha: passwordHash,
-                    admin
-                }
-            })
-            
-            if(userUpdate){
-                return {status: 203, message: 'usuario atualizado com sucesso', userUpdate}
-            }
-            return {status: 400, message: 'erro ao atualizar o usuario', userUpdate}
+	async delete(idUser: number) {
+		try {
+			const userFind = await this.prisma.user.findUnique({
+				where: { id: idUser },
+			});
 
-        } catch (error) {
-            throw new Error(`Erro ao atualizar usuario ${error}`, )	
-        }
-    }
+			if (!userFind) {
+				return { status: 404, message: "Usuario não encontrado" };
+			}
 
-    async delete(idUser: number){
-        try {
-            const userFind = await this.prisma.user.findUnique({ where: { id: idUser } })
+			await this.prisma.user.delete({ where: { id: idUser } });
 
-            if(!userFind){
-                return {status: 404, message: 'Usuario não encontrado'}
-            }
-
-            await this.prisma.user.delete({ where: { id: idUser } })
-
-            return {status: 203, message: 'Usuario deletado com sucesso'}
-            
-        } catch (error) {
-            throw new Error(`Erro ao deletar usuario ${error}`, )	
-        }
-    }
+			return { status: 203, message: "Usuario deletado com sucesso" };
+		} catch (error) {
+			throw new Error(`Erro ao deletar usuario ${error}`);
+		}
+	}
 }

@@ -16,7 +16,7 @@ export async function login(req: Request, res: Response) {
 
 		const user = await prisma.user.findUnique({ where: { email } });
 
-		if (user && (await bcrypt.compare(senha, user.senha))) {
+		if (user && (await bcrypt.compare(senha, user.password))) {
 			const token = jwt.sign({ userId: user.id }, chaveSecreta, {
 				expiresIn: "8h",
 			});
@@ -25,7 +25,7 @@ export async function login(req: Request, res: Response) {
 
 		return res.status(401).json({ message: "Credenciais inválidas" });
 	} catch (error) {
-		throw new Error(`Erro ao fazer login ${error}`);
+		return res.status(500).json({ message: "Erro ao fazer login" });
 	}
 }
 
@@ -34,18 +34,22 @@ export async function verifyToken(
 	res: Response,
 	next: () => void,
 ) {
-	const token = req.headers.authorization?.split(" ")[1];
+	try {
+		const token = req.headers.authorization?.split(" ")[1];
 
-	if (!token) {
-		return res.status(403).json({ message: "Token não fornecido" });
-	}
-
-	jwt.verify(token, chaveSecreta, (err, decode) => {
-		if (err || !decode) {
-			return res.status(401).json({ message: "Token invalido" });
+		if (!token) {
+			return res.status(403).json({ message: "Token não fornecido" });
 		}
-		req.userId = decode;
 
-		next();
-	});
+		jwt.verify(token, chaveSecreta, (err, decode) => {
+			if (err || !decode) {
+				return res.status(401).json({ message: "Token invalido!!" });
+			}
+			req.userId = decode;
+
+			next();
+		});
+	} catch (error) {
+		return res.status(500).json({ message: "Erro ao verificar token" });
+	}
 }

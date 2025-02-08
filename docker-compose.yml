@@ -1,12 +1,45 @@
-version: "3"
+version: "3.8"
 
+networks:
+  backend:
+    driver: bridge
 services:
-  postgres:
-    image: postgres
+  db:
+    container_name: postgres_db
+    image: postgres:latest
     restart: always
     environment:
-      POSTGRES_USER: "postesDB"
-      POSTGRES_PASSWORD: "leo@123456"
+      POSTGRES_HOST: "${POSTGRES_HOST}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - 5432:5432
+    env_file:
+      - .env
+    networks:
+      - backend
+
+  app: 
+    container_name: node_app
+    build: .
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    ports:
+      - 3333:3333
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - backend
+    command: sh -c "npx prisma generate && npx prisma db pull && npx prisma generate && npm run dev"
+
+
+volumes:
+  postgres_data: 
+
 

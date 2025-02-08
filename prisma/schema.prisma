@@ -8,59 +8,53 @@ datasource db {
 }
 
 model User {
-  id          Int       @id     @default(autoincrement())
-  email       String    @unique
-  name        String
-  senha       String 
-  admin       Boolean   @default(false)
-  posts       Post[]
-  comments    Comment[]
-  likes       Like[]
-  image       String?
-  cover       String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt @default(now())
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  name         String
+  password     String
+  admin        Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @default(now()) @updatedAt
+  image_perfil String?
+  image_cover  String?
+  bio          String?   @db.VarChar(100)
+  comments     Comment[]
+  likes        Like[]
+  posts        Post[]
 
   @@map("users")
 }
 
 model Post {
-  id        Int       @id   @default(autoincrement())
-  content   String
-  userId    Int
-  user      User      @relation(fields: [userId], references: [id])
-  likes     Like[]
-  comments  Comment[]
-  image       String?
-  createdAt DateTime  @default(now())
-  updated   DateTime  @updatedAt @default(now())
-  
+  id         Int       @id @default(autoincrement())
+  content    String
+  image_url  String?
+  id_user    Int
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  comments   Comment[]
+  users      User      @relation(fields: [id_user], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "posts_userId_fkey")
+
   @@map("posts")
 }
 
-
 model Comment {
-    id        Int       @id   @default(autoincrement())
-    content   String
-    postId    Int
-    post      Post      @relation(fields: [postId], references: [id])
-    userId    Int
-    user      User      @relation(fields: [userId], references: [id])
-    createdAt DateTime  @default(now())
-    updated   DateTime  @updatedAt @default(now())
+  id         Int       @id @default(autoincrement())
+  content    String
+  id_user    Int
+  id_post    Int
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  posts      Post      @relation(fields: [id_post], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "comments_postId_fkey")
+  users      User      @relation(fields: [id_user], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "comments_userId_fkey")
 
-    @@map("comments")
+  @@map("comments")
 }
+
 model Like {
-  id        Int       @id   @default(autoincrement())
-  postId    Int
-  post      Post      @relation(fields: [postId], references: [id])
-  userId    Int
-  user      User      @relation(fields: [userId], references: [id])
-  createdAt DateTime  @default(now())
-  updated   DateTime  @updatedAt @default(now())
+  id_post    Int
+  id_user    Int
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  users      User      @relation(fields: [id_user], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@unique([userId, postId])
-
+  @@id([id_post, id_user])
   @@map("likes")
 }

@@ -1,77 +1,87 @@
 import { Router } from "express";
 import multer from "multer";
-import { CommentController } from "../controllers/CommentController";
-import { LikeController } from "../controllers/LikeController";
-import { PostController } from "../controllers/PostController";
-import { UsersControllers } from "../controllers/UserController";
-import { login, verifyToken } from "../utils/login";
+
+import { CommentModule } from "../modules/comment";
+import { LikeModule } from "../modules/like/index";
+import { LoginModule } from "../modules/login";
+import { PostModule } from "../modules/post";
+
+import { userController } from "../modules/user";
+import { UsersRoutes } from "./users/user.routes";
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
-
-const userController = new UsersControllers();
-const postController = new PostController();
-const commentController = new CommentController();
-const likeController = new LikeController();
-
 const routes = Router();
 
-routes.get("/users", userController.list.bind(userController));
-routes.get("/users/:id", userController.findUser.bind(userController));
-routes.post("/users", userController.create.bind(userController));
-routes.put("/users/:id", userController.update.bind(userController));
-routes.delete("/users/:id", userController.delete.bind(userController));
+const usersRoutes = new UsersRoutes(userController);
 
-routes.post("/login", login);
+routes.use(usersRoutes.getRoutes());
 
-routes.get("/posts", verifyToken, postController.list.bind(postController));
+routes.post("/login", LoginModule.login.bind(LoginModule));
+
+routes.get(
+	"/posts",
+	LoginModule.verifyToken.bind(LoginModule),
+	PostModule.findAll.bind(PostModule),
+);
+routes.get(
+	"/posts/me",
+	LoginModule.verifyToken.bind(LoginModule),
+	PostModule.findAllByUserPost.bind(PostModule),
+);
+routes.get(
+	"/posts/user/:userId",
+	LoginModule.verifyToken.bind(LoginModule),
+	PostModule.findAllByUserPost.bind(PostModule),
+);
 routes.get(
 	"/posts/:id",
-	verifyToken,
-	postController.getPostById.bind(postController),
+	LoginModule.verifyToken.bind(LoginModule),
+	PostModule.findById.bind(PostModule),
 );
 routes.post(
 	"/posts",
 	upload.single("image"),
-	verifyToken,
-	postController.create.bind(postController),
+	LoginModule.verifyToken.bind(LoginModule),
+	PostModule.create.bind(PostModule),
 );
 routes.put(
 	"/posts/:id",
-	verifyToken,
-	postController.update.bind(postController),
+	LoginModule.verifyToken.bind(LoginModule),
+	PostModule.update.bind(PostModule),
 );
 routes.delete(
 	"/posts/:id",
-	verifyToken,
-	postController.delete.bind(postController),
+	LoginModule.verifyToken.bind(LoginModule),
+	PostModule.delete.bind(PostModule),
 );
 
 routes.get(
 	"/posts/:idPost/comments",
-	verifyToken,
-	commentController.listCommentsByIdPost.bind(commentController),
+	LoginModule.verifyToken.bind(LoginModule),
+	CommentModule.findByPostId.bind(CommentModule),
 );
 routes.post(
 	"/posts/:idPost/comments",
-	verifyToken,
-	commentController.create.bind(commentController),
+	LoginModule.verifyToken.bind(LoginModule),
+	CommentModule.create.bind(CommentModule),
 );
 routes.put(
 	"/posts/:idPost/comments/:id",
-	verifyToken,
-	commentController.update.bind(commentController),
+	LoginModule.verifyToken.bind(LoginModule),
+	CommentModule.update.bind(CommentModule),
 );
 routes.delete(
-	"/posts/:idPost/comments/:id",
-	verifyToken,
-	commentController.delete.bind(commentController),
+	"/comments/:id",
+	LoginModule.verifyToken.bind(LoginModule),
+	CommentModule.delete.bind(CommentModule),
 );
 
-routes.post(
-	"/posts/:idPost/like",
-	verifyToken,
-	likeController.toggleLike.bind(likeController),
+routes.post("/like/posts/:id", LikeModule.toggleLike.bind(LikeModule));
+routes.get("/like/posts/:id", LikeModule.findAllByPostId.bind(LikeModule));
+routes.get(
+	"/like/posts/:idPost/user/:idUser",
+	LikeModule.findOnly.bind(LikeModule),
 );
 
 export { routes };

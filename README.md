@@ -1,6 +1,6 @@
 # Postes - BackEnd
 
-Este é a parte backend de um projeto desenvolvido baseado em um mural de comunicados. Visando implementar um sistema que permita a criação de usuarios administrativos ou não, que com base em seus respectivos acessos podem criar, alterar ou até mesmo deletar um poste.
+Este é a parte backend de um projeto desenvolvido baseado uma rede social. Visando implementar um sistema que permita a criação de usuarios, que podem interagir atraves de postagens, comentarios e curtidas com outros usuários.
 
 ## Índice
 
@@ -12,9 +12,9 @@ Este é a parte backend de um projeto desenvolvido baseado em um mural de comuni
 
 ## Requisitos
 
-- [x] node - 18.16.0
-- [x] npm - 9.5.1
-- [x] Prisma - 5.7.1
+- [x] node - 23.6.0
+- [x] npm - 11.1.0
+- [x] Prisma - ^6.3.0
 - [x] Projeto FrontEnd configurado ou testador de rotas
 
 
@@ -40,18 +40,13 @@ yarn
 
 ```
 
-Em seguida rode os comando yarn add @prisma/client e npx prisma generate
+Caso tenha docker e docker compose poder utilizar o seguinte comando que ele subirá um container com as imagens do app e do banco
 
 ```bash
-yarn add @prisma/client 
-
-npx prisma generate
+docker-compose up --build
 
 ```
-
-## Executando o projeto
-
-Para executar o projeto é necessario que você esteja dentro da pasta e utilize o comando yarn dev, isso iniciará o servidor
+Se nao tiver Docker precisará criar um DB e inserir as variaves globais no .env para fazer conexao com o banco e inicializar o prisma, após rode o comando 
 
 
 ```bash
@@ -59,43 +54,38 @@ yarn dev
 
 ```
 
-Caso necessite outro comando ou atualização de arquivos verifique arquivo é indicado pelo erro
-
-
 ## Desafios
 
-- O primeiro desafio foi o ponto para fazer a conexão com o banco de dados e poder unir o banco de users com o de postes e para isso utilizei o prisma, um ORM que facilita a interação com bancos de dados.
+- implementar O Google Cloud para subir imagens utilizando o serviço de storage da cloud.
 
-- Outro desafio foi a autenticação de usuarios para permitir somente tivessem acesso a rota de postes usuarios que possuissem um token e para isso utilizei JWT que permite a manipulação de tokens de uma forma mais pratica.
+- Iniciar uma arquitetura mais limpar para poder implementar testes, e utilizar injeçao de dependenciar para poder abstrair mais o codigo.
 
-- Mais um ponto foi trabalhar com Orientação a objetos visto que é uma dos modos de trabalhar mais utilizados no mercado optei por implementa-lo no projeto e poder aprender um pouco mais.
+- Fazer a conexão com o banco de dados e poder unir o banco de users com o de postes e para isso utilizei o prisma.
+
+- Autenticação de usuarios para permitir somente tivessem acesso a rota de postes usuarios que possuissem um token e para isso utilizei JWT que permite a manipulação de tokens de uma forma mais pratica.
 
 - Fazer a criptografia das senhas dos usuarios para poder registrar no banco de dados e com isso manter uma maior segurança da aplicação, para isso usei o bcrypt.
+
 
 ## Endpoints/API
 
 ### User
 
-
 Rotas users usadas para tratarmos de um usuario em nosso sistema.
 
 ```javaScript
 
-// Busca todos os usuarios
-routes.get('/users', userController.list.bind(userController))
-
-// Busca um unico usuario
-routes.get('/users/:id', userController.findUser.bind(userController))
-
-// Cria um usuario
-routes.post('/users', userController.create.bind(userController))
-
-//Atualiza um usuario
-routes.put('/users/:id', userController.update.bind(userController))
-
-//Deleta um usuario
-routes.delete('/users/:id', userController.delete.bind(userController))
-
+		routes.get( "/users", userController.findAllUsers.bind(userController));
+		routes.get( "/users/:id",	userController.findUsersById.bind(userController));
+		routes.post("/users", upload.fields([
+				{ name: "perfil", maxCount: 1 },
+				{ name: "cover", maxCount: 1 },
+			]), serController.create.bind(userController));
+		routes.put( "/users/:id", upload.fields([
+				{ name: "perfil", maxCount: 1 },
+				{ name: "cover", maxCount: 1 },
+			]),userController.update.bind(userController));
+		routes.delete( "/users/:id",userController.delete.bind(userController));
 ```
 
 ------
@@ -110,26 +100,57 @@ routes.delete('/users/:id', userController.delete.bind(userController))
 routes.post('/login', login)
 
 ```
-
 ------
 
 ### posts
 
- Rotas são usadas para cadastrar, visualizar ou editar uma categoria. (Necessario Token para acessar)
+ Rotas são usadas para cadastrar, visualizar, editar oiu deletar um post.
 
 ```javaScript
-// Dados para cadastrar um poste (POST) - User precisa ter um token
-routes.post('/posts', verifyToken, postController.create.bind(postController))
 
-//Não é necessario enviar dados apenas acessar a rota (GET)
-routes.get('/posts', verifyToken, postController.list.bind(postController))
 
-// Dados para atualizar um poste (PUT) - User precisa ter um token
-routes.put('/posts/:id', verifyToken, postController.update.bind(postController))
+routes.get(	"/posts",	LoginModule.verifyToken.bind(LoginModule),	PostModule.findAll.bind(PostModule));
 
-// Dados para deletar um poste (DELETE) - User precisa ter um token
-routes.delete('/posts/:id', verifyToken, postController.delete.bind(postController))
+routes.get("/posts/me",	LoginModule.verifyToken.bind(LoginModule),PostModule.findAllByUserPost.bind(PostModule));
+
+routes.get("/posts/user/:userId", LoginModule.verifyToken.bind(LoginModule), PostModule.findAllByUserPost.bind(PostModule));
+
+routes.get( "/posts/:id", LoginModule.verifyToken.bind(LoginModule), PostModule.findById.bind(PostModule));
+
+routes.post( "/posts", upload.single("image"), LoginModule.verifyToken.bind(LoginModule), PostModule.create.bind(PostModule));
+
+routes.put( "/posts/:id", LoginModule.verifyToken.bind(LoginModule), 	PostModule.update.bind(PostModule));
+
+routes.delete( "/posts/:id", LoginModule.verifyToken.bind(LoginModule), PostModule.delete.bind(PostModule));
 ```
+------
 
+### comments
 
+ Rotas são usadas para cadastrar, visualizar, editar ou deletar um comentario.
+
+```javaScript
+
+routes.get("/posts/:idPost/comments",	LoginModule.verifyToken.bind(LoginModule),CommentModule.findByPostId.bind(CommentModule));
+
+routes.post("/posts/:idPost/comments",LoginModule.verifyToken.bind(LoginModule),CommentModule.create.bind(CommentModule));
+
+routes.put("/posts/:idPost/comments/:id",	LoginModule.verifyToken.bind(LoginModule),	CommentModule.update.bind(CommentModule));
+
+routes.delete("/comments/:id",LoginModule.verifyToken.bind(LoginModule),CommentModule.delete.bind(CommentModule));
+```
+------
+
+### Like
+
+ Rotas são usadas para cadastrar, visualizar ou editar um comentario.
+
+```javaScript
+
+routes.post("/like/posts/:id", LikeModule.toggleLike.bind(LikeModule));
+
+routes.get("/like/posts/:id", LikeModule.findAllByPostId.bind(LikeModule));
+
+routes.get( "/like/posts/:idPost/user/:idUser", LikeModule.findOnly.bind(LikeModule));
+```
 ------

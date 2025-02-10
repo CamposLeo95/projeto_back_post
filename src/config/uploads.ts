@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { getFilePathFromUrl } from "../utils/gcp";
 
 const storage = new Storage({
-	keyFilename: path.resolve(__dirname, "./credentials.json"),
+	keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
 });
 
 const bucketName = "images-social-media-final";

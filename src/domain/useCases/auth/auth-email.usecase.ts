@@ -1,6 +1,7 @@
 import type { IAuthWithEmailDTO } from "../../../app/auth/dtos/auth.dtos";
 import type { PrismaUserRepository } from "../../../infra/db/prisma/repositories/prisma-user.repository";
-import { checkAuthWithEmail } from "../../../services/auth/check-auth-email.service";
+import { checkAuthWithEmail } from "../../../services/auth/auth-email.service";
+
 import { AppError } from "../../../shared/exceptions/AppError";
 
 export class AuthWithEmailUseCase {

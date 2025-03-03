@@ -1,11 +1,12 @@
-import path from "node:path";
 import { Storage } from "@google-cloud/storage";
 import { v4 as uuidv4 } from "uuid";
 import { getFilePathFromUrl } from "../../../shared/utils/gcp";
 
-const storage = new Storage({
-	keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-});
+const storage = process.env.GOOGLE_APPLICATION_CREDENTIALS
+	? new Storage({
+			keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+		})
+	: new Storage();
 
 const bucketName = "images-social-media-final";
 const bucket = storage.bucket(bucketName);

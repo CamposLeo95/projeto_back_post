@@ -2,6 +2,10 @@
 
 Este é a parte backend de um projeto desenvolvido baseado uma rede social. Visando implementar um sistema que permita a criação de usuarios, que podem interagir atraves de postagens, comentarios e curtidas com outros usuários.
 
+
+## IMPORTANTE!!!
+O projeto 
+
 ## Índice
 
 - [Requisitos](#requisitos)

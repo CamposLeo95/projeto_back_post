@@ -1,9 +1,9 @@
 import { Router } from "express";
 import multer from "multer";
-import type { UsersControllers } from "../../infra/http/modules/user/user.controller";
+import type { UsersControllers } from "../../app/user/controller/user.controller";
 
 export class UsersRoutes {
-	private routes;
+	private routes: Router;
 	private storage = multer.memoryStorage();
 	private upload = multer({ storage: this.storage });
 	constructor(private userController: UsersControllers) {

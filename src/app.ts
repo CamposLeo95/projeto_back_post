@@ -1,7 +1,10 @@
 import path from "node:path";
 import cors from "cors";
+
 import express from "express";
 import { routes } from "./routes/routes";
+import "dotenv/config";
+import { errorHandler } from "./middlewares/errors/errorHandler.middleware";
 
 export class App {
 	app = express();
@@ -22,6 +25,7 @@ export class App {
 
 	routes() {
 		this.app.use(routes);
+		this.app.use(errorHandler);
 	}
 }
 

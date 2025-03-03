@@ -1,5 +1,6 @@
 import type { User as UserRaw } from "@prisma/client";
-import { User } from "../../../../modules/user/entities/user.entity";
+import type { IUserOutputDTO } from "../../../../app/user/dtos/user.dto";
+import type { User } from "../../../../domain/entities/user/user.entity";
 
 interface IPrismaCreate {
 	name: string;
@@ -24,8 +25,8 @@ export class PrismaUserMapper {
 		};
 	}
 
-	static toDomain(props: UserRaw): User {
-		return new User({
+	static toDomain(props: UserRaw): IUserOutputDTO {
+		return {
 			id: props.id,
 			name: props.name,
 			email: props.email,
@@ -34,8 +35,7 @@ export class PrismaUserMapper {
 			image_perfil: props.image_perfil ?? "",
 			image_cover: props.image_cover ?? "",
 			createdAt: props.createdAt,
-			updatedAt: props.updatedAt,
 			bio: props.bio ?? "",
-		});
+		};
 	}
 }

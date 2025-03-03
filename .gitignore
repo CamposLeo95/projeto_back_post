@@ -3,6 +3,6 @@ node_modules
 .env
 dist
 social-media-devclub-f136b0da36de.jsonsrc/config/social-media-devclub-f136b0da36de.json
-src/config/social-media-devclub-f136b0da36de.json
-src/config/credentials.json
+src/infra/config/gcp/teste.ts
+
 

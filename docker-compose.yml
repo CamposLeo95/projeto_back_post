@@ -24,7 +24,9 @@ services:
 
   app: 
     container_name: node_app
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile.dev
     depends_on:
       - db
     environment:

@@ -1,0 +1,16 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package*.json tsconfig.json ./
+
+# Exclui dependencias de desenvolvimento tornando o app mais leve
+RUN npm install --omit=dev
+
+COPY . .
+
+RUN npm run build
+
+EXPOSE 3333
+
+CMD ["npm", "run", "start"]

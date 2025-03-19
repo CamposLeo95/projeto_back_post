@@ -10,7 +10,10 @@ export class App {
 	app = express();
 
 	constructor() {
-		this.app;
+		this.initApp();
+	}
+
+	initApp() {
 		this.middlewares();
 		this.routes();
 	}

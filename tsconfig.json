@@ -9,7 +9,11 @@
 		"baseUrl": "./",
 		"paths": {
 			"@types/*": ["@types/*"]
-		}
+		},
+		"rootDir": "./src",
+		"outDir": "./dist",
+		"removeComments": true,
+		"noEmitOnError": true
 	},
 	"include": ["src", "@types"]
 }

@@ -1,0 +1,23 @@
+@base_url = http://localhost:3333
+@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjc2LCJpYXQiOjE3NDI4MTcxMTgsImV4cCI6MTc0Mjg0NTkxOH0.l8YHp2W_THUWrURUS6hwHVMMFiLg6C_dE3h-CImmOzg
+
+GET {{base_url}}/users
+
+###
+
+POST {{base_url}}/auth
+Content-Type: application/json
+
+{
+    "email": "leonardo@email.com",
+    "password": "pass@1234"
+}
+
+###
+
+GET {{base_url}}/posts
+Content-Type: application/json
+Authorization: {{token}}
+
+
+

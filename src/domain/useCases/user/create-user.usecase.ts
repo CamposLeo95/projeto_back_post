@@ -1,4 +1,4 @@
-import type { IUserCreateDTO } from "../../../app/user/dtos/user.dto";
+import type { IUserInputCreateDTO } from "src/app/user/dtos/user.dto";
 import type { UserRepository } from "../../../app/user/repositories/user.repository";
 import { AppError } from "../../../shared/exceptions/AppError";
 
@@ -6,7 +6,7 @@ import { hashPassword } from "../../../shared/utils/bcryptPassword";
 
 export class CreateUserUseCase {
 	constructor(private userRepo: UserRepository) {}
-	async execute({ password, ...userDTO }: IUserCreateDTO): Promise<void> {
+	async execute({ password, ...userDTO }: IUserInputCreateDTO): Promise<void> {
 		try {
 			const passwordHash = await hashPassword(password);
 			const user = {

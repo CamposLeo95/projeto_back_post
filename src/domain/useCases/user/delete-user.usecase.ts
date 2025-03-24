@@ -9,7 +9,7 @@ export class DeleteUserUseCase {
 			await this.userRepo.delete(id);
 		} catch (error: unknown) {
 			if (error instanceof AppError) throw error;
-			throw new AppError("Erro interno no servidor", 500);
+			new AppError("Erro interno no servidor", 500);
 		}
 	}
 }

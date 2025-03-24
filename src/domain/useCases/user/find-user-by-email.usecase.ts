@@ -6,8 +6,7 @@ export class FindUserByEmailUseCase {
 
 	async execute(email: string) {
 		try {
-			const user = await this.userRepo.findByEmail(email);
-			return user;
+			return await this.userRepo.findByEmail(email);
 		} catch (error) {
 			if (error instanceof AppError) throw error;
 			throw new Error("Erro interno do servidor");

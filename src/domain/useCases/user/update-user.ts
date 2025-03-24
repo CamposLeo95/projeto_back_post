@@ -1,11 +1,11 @@
-import type { IUserUpdateDTO } from "../../../app/user/dtos/user.dto";
+import type { IUserInputUpdateDTO } from "src/app/user/dtos/user.dto";
 import type { UserRepository } from "../../../app/user/repositories/user.repository";
 import { AppError } from "../../../shared/exceptions/AppError";
 
 export class UpdateUserUseCase {
 	constructor(private useRepo: UserRepository) {}
 
-	async execute(updateUserDTO: IUserUpdateDTO) {
+	async execute(updateUserDTO: IUserInputUpdateDTO) {
 		try {
 			await this.useRepo.update(updateUserDTO);
 		} catch (error) {

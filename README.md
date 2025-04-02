@@ -1,160 +1,205 @@
-# Postes - BackEnd
+# 📌 Rede Social (Back end)
 
-Este é a parte backend de um projeto desenvolvido baseado uma rede social. Visando implementar um sistema que permita a criação de usuarios, que podem interagir atraves de postagens, comentarios e curtidas com outros usuários.
+![Badge de Status](https://img.shields.io/badge/status-EM%20DESENVOLVIMENTO-orange)
 
-
-## IMPORTANTE!!!
-O projeto 
-
-## Índice
-
-- [Requisitos](#requisitos)
-- [Instalação](#instalação)
-- [Configuração](#configuração)
-- [Executando o projeto](#executando-o-projeto)
-- [Endpoints/API](#endpointsapi)
-
-## Requisitos
-
-- [x] node - 23.6.0
-- [x] npm - 11.1.0
-- [x] Prisma - ^6.3.0
-- [x] Projeto FrontEnd configurado ou testador de rotas
+Back End da aplicação rede social. Projeto desenvolvido como laboratório de estudos para aplicar novos conceitos e boas práticas de arquitetura e engenharia de software.
 
 
-## Instalação 
+## 📚 Estudos Implementados
 
-Faça o clone do repositório 
+[✅] - Implementacao de arquitetura limpa (Clean Code)
+[✅] - Arquiteturação de banco de dados SQL 
+[✅] - Injeção de dependencia
+[✅] - Docker
+[🔄️] - Testes automatizados
+
+
+## ⚙️ Tecnologias Utilizadas
+
+Este projeto foi desenvolvido com as seguintes tecnologias:
+
+- 🔹 [Node JS](#)
+- 🔹 [Typescript](#)
+- 🔹 [Postgres](#)
+- 🔹 [Prisma](#)
+- 🔹 [JWT](#)
+- 🔹 [Multer](#)
+- 🔹 [Jest](#)
+
+
+## 🛠️ Instalação e Configuração
+### 📌 Pré-requisitos
+Antes de começar, certifique-se de ter instalado:
+
+Node.js (versão 23+)
+
+PostgreSQL (ou use o Docker)
+
+Docker e Docker Compose (opcional, para ambiente isolado)
+
+#### 📥 Clone o repositório
 
 ```bash
 git clone https://github.com/CamposLeo95/projeto_back_post.git
-
-```
-
-Depois acesse a a pasta atraves do prompt 
-
-```bash
 cd projeto_back_post
-
 ```
-E rode o comando yarn para instalar as dependencias 
+
+#### 📦 Instale as dependências
 
 ```bash
-yarn 
-
+npm install
 ```
 
-Caso tenha docker e docker compose poder utilizar o seguinte comando que ele subirá um container com as imagens do app e do banco
+#### 🎲 Crie o banco de dados
 
+Crie o banco de dados e configure as tabelas em SQL de acordo com o arquivo 
+
+```bash
+projeto/
+│-- 📂SQL/
+│   ├── create_tables.sql
+```
+
+
+#### 🔧 Configuração do Ambiente
+
+```bash
+DATABASE_URL=
+POSTGRES_HOST=
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+POSTGRES_DB=
+GOOGLE_APPLICATION_CREDENTIALS=
+PORT=
+JWT_SECRET=
+```
+## 🚀 Como Executar o Projeto
+
+#### 🔥 Rodando em Desenvolvimento
+```bash
+npx prisma db pull && npx prisma generate && npm run dev
+```
+#### 🐳 Rodando com Docker
 ```bash
 docker-compose up --build
-
 ```
-Se nao tiver Docker precisará criar um DB e inserir as variaves globais no .env para fazer conexao com o banco e inicializar o prisma, após rode o comando 
 
+## 🧪 Testes
+Para rodar os testes, utilize:
+```bash
+npm run test
+```
+
+## 📌 Rotas e Endpoints
+
+### 🏷️ Autenticação
+| Método | Rota             | Descrição           | Type-data       | Data              |
+|--------|------------------|---------------------|-----------------|-------------------|
+| POST   | `/auth`          | Autenticação        | JSON            |  email / password |
+
+### 📝 Users
+| Método | Rota             | Descrição            | Type-data       | Data              |
+|--------|------------------|----------------------|-----------------|-------------------|
+| POST   | `/users`         | Criar usuarios       | FormData        |  name / email / password / admin / perfil(file) cover(file) / bio |          
+| PUT    | `/users/userId`  | Atualizar usuarios   | FormData        |  name / email / password / admin / perfil(file) cover(file) / bio |          
+| GET    | `/users`         | Buscar usuarios      | -               | -                 |          
+| GET    | `/users/userId`  | Buscar usuario por ID| -               | -                 |     
+| DEL    | `/users/userId`  | Deletar usuario      | -               | -                 |               
+
+### 📝 Posts
+| Método | Rota             | Descrição           | Type-data       | Data              |
+|--------|------------------|---------------------|-----------------|-------------------|
+| POST   | `/posts`         | Criar post       | FormData        |  content / image(file) |          
+| DEL    | `/posts/idPost`  | Deletar post      | -               |-                 |            
+| GET    | `/posts`         | Buscar posts      | -               | -                 |          
+| GET    | `/posts/idPost`  | Buscar posts por ID| -               | -                 |     
+| GET    | `/posts/me`      | Buscar posts do usuario logado     | -               | -                 |    
+| GET    | `/posts/user/12`  |  Buscar posts por usuario    | -               | -                 |    
+
+### 📝 Comments
+| Método | Rota             | Descrição           | Type-data       | Data              |
+|--------|------------------|---------------------|-----------------|-------------------|
+| POST   | `/auth/login`    | Autenticação        | JSON            |  email / password |          
+| POST   | `/auth/login`    | Autenticação        | JSON            |  email / password |    
+
+### 📝 Comments
+| Método | Rota               | Descrição           | Type-data       | Data              |
+|--------|--------------------|---------------------|-----------------|-------------------|
+| POST   | `/posts/idPost/comments`| Criar comentario    | JSON            | content                 |          
+| PUT    | `/posts/idPost/comments/id`| Buscar comentario por post | JSON             | content                |   
+| DEL    | `/comments/ID`             | Deletar comentario     | -            |                       |          
+| GET    | `/posts/84/comments`| Buscar comentarios por post | -               | -                 |       
+
+### 📝 Likes
+| Método | Rota                | Descrição             | Type-data       | Data              |
+|--------|---------------------|-----------------------|-----------------|-------------------|
+| POST   | `/like/posts/postID`| Toggle Post           | -               | -                 |          
+| GET    | `/like/posts/postID`| Buscar likes por post | -               | -                 |     
+
+
+
+## 📂 Estrutura do Projeto
 
 ```bash
-yarn dev
-
+projeto/
+│-- 📂@types/
+│-- 📂node_modules/
+│-- 📂prisma/
+│-- 📂SQL/
+│   ├── 📂app/
+│       ├── 📂comment/
+│           ├── 📂controllers/
+│           ├── 📂dtos/
+│           ├── 📂repositories/
+│           ├── index.ts
+│       ├── 📂auth/
+│       ├── 📂like/
+│       ├── 📂post/
+│       ├── 📂user/
+│   ├── 📂domain/
+│       ├── 📂entities/
+│           ├── 📂comment/
+│           ├── 📂like/
+│           ├── 📂user/
+│       ├── 📂useCases/
+│           ├── 📂comment/
+│           ├── 📂auth/
+│           ├── 📂like/
+│           ├── 📂user/
+│   ├── 📂infra/
+│       ├── 📂config/
+│           ├── 📂gcp/
+│           ├── 📂multer/
+│       ├── 📂db/
+│           ├── 📂prisma/
+│               ├── 📂mappers/
+│               ├── 📂repositories/
+│   ├── 📂middlewares/
+│   ├── 📂routes/
+│       ├── 📂comment/
+│       ├── 📂auth/
+│       ├── 📂like/
+│       ├── 📂post/
+│       ├── 📂user/
+│       ├── routes.ts
+│   ├── 📂services/
+│   ├── 📂shared/
+│       ├── 📂exceptions/
+│       ├── 📂types/
+│       ├── 📂utils/
+│   ├── 📂tests/ ("Segue a mesma estrutura do diretório SRC")
+│   ├── app.ts
+│   ├── server.ts
+│-- .dockerignore
+│-- .env
+│-- .env.example
+│-- .gitignore
+│-- docker-compose.yml
+│-- Dockerfile.dev
+│-- Dockerfile.prod
+│-- jest.config.js
+│-- package.json
+│-- package-lock.json
+│-- README.md
+│-- tsconfig.json
 ```
-
-## Desafios
-
-- implementar O Google Cloud para subir imagens utilizando o serviço de storage da cloud.
-
-- Iniciar uma arquitetura mais limpar para poder implementar testes, e utilizar injeçao de dependenciar para poder abstrair mais o codigo.
-
-- Fazer a conexão com o banco de dados e poder unir o banco de users com o de postes e para isso utilizei o prisma.
-
-- Autenticação de usuarios para permitir somente tivessem acesso a rota de postes usuarios que possuissem um token e para isso utilizei JWT que permite a manipulação de tokens de uma forma mais pratica.
-
-- Fazer a criptografia das senhas dos usuarios para poder registrar no banco de dados e com isso manter uma maior segurança da aplicação, para isso usei o bcrypt.
-
-
-## Endpoints/API
-
-### User
-
-Rotas users usadas para tratarmos de um usuario em nosso sistema.
-
-```javaScript
-
-		routes.get( "/users", userController.findAllUsers.bind(userController));
-		routes.get( "/users/:id",	userController.findUsersById.bind(userController));
-		routes.post("/users", upload.fields([
-				{ name: "perfil", maxCount: 1 },
-				{ name: "cover", maxCount: 1 },
-			]), serController.create.bind(userController));
-		routes.put( "/users/:id", upload.fields([
-				{ name: "perfil", maxCount: 1 },
-				{ name: "cover", maxCount: 1 },
-			]),userController.update.bind(userController));
-		routes.delete( "/users/:id",userController.delete.bind(userController));
-```
-
-------
-
-### Login
-
- Rota usada para usuario efetuar um login.
-
-```javaScript
-
-// Rota para usuario efetuar o login e receber um token
-routes.post('/login', login)
-
-```
-------
-
-### posts
-
- Rotas são usadas para cadastrar, visualizar, editar oiu deletar um post.
-
-```javaScript
-
-
-routes.get(	"/posts",	LoginModule.verifyToken.bind(LoginModule),	PostModule.findAll.bind(PostModule));
-
-routes.get("/posts/me",	LoginModule.verifyToken.bind(LoginModule),PostModule.findAllByUserPost.bind(PostModule));
-
-routes.get("/posts/user/:userId", LoginModule.verifyToken.bind(LoginModule), PostModule.findAllByUserPost.bind(PostModule));
-
-routes.get( "/posts/:id", LoginModule.verifyToken.bind(LoginModule), PostModule.findById.bind(PostModule));
-
-routes.post( "/posts", upload.single("image"), LoginModule.verifyToken.bind(LoginModule), PostModule.create.bind(PostModule));
-
-routes.put( "/posts/:id", LoginModule.verifyToken.bind(LoginModule), 	PostModule.update.bind(PostModule));
-
-routes.delete( "/posts/:id", LoginModule.verifyToken.bind(LoginModule), PostModule.delete.bind(PostModule));
-```
-------
-
-### comments
-
- Rotas são usadas para cadastrar, visualizar, editar ou deletar um comentario.
-
-```javaScript
-
-routes.get("/posts/:idPost/comments",	LoginModule.verifyToken.bind(LoginModule),CommentModule.findByPostId.bind(CommentModule));
-
-routes.post("/posts/:idPost/comments",LoginModule.verifyToken.bind(LoginModule),CommentModule.create.bind(CommentModule));
-
-routes.put("/posts/:idPost/comments/:id",	LoginModule.verifyToken.bind(LoginModule),	CommentModule.update.bind(CommentModule));
-
-routes.delete("/comments/:id",LoginModule.verifyToken.bind(LoginModule),CommentModule.delete.bind(CommentModule));
-```
-------
-
-### Like
-
- Rotas são usadas para cadastrar, visualizar ou editar um comentario.
-
-```javaScript
-
-routes.post("/like/posts/:id", LikeModule.toggleLike.bind(LikeModule));
-
-routes.get("/like/posts/:id", LikeModule.findAllByPostId.bind(LikeModule));
-
-routes.get( "/like/posts/:idPost/user/:idUser", LikeModule.findOnly.bind(LikeModule));
-```
-------

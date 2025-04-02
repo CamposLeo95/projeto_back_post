@@ -20,9 +20,13 @@ export class PrismaLikeRepository implements LikeRepository {
 
 	async delete(likeInputDTO: ILikeInputDTO) {
 		try {
+			const { id_post, id_user } = likeInputDTO;
 			await this.client.like.delete({
 				where: {
-					id_post_id_user: likeInputDTO,
+					id_user_id_post: {
+						id_post,
+						id_user,
+					},
 				},
 			});
 		} catch (error) {
@@ -47,9 +51,13 @@ export class PrismaLikeRepository implements LikeRepository {
 	}
 	async findOnlyLike(likeInputDTO: ILikeInputDTO) {
 		try {
+			const { id_post, id_user } = likeInputDTO;
 			return await this.client.like.findUnique({
 				where: {
-					id_post_id_user: likeInputDTO,
+					id_user_id_post: {
+						id_post,
+						id_user,
+					},
 				},
 			});
 		} catch (error) {

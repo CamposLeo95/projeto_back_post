@@ -18,7 +18,7 @@ export class AuthController {
 
 			const response = await this.authWithEmailUseCase.execute(loginDTO);
 
-			return res.status(200).json({ data: { ...response } });
+			return res.status(200).json({ ...response });
 		} catch (error) {
 			next(error);
 		}

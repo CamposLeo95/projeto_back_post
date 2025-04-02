@@ -50,6 +50,7 @@ class LikeController {
 			const likeDTO = { id_user, id_post };
 
 			const res = await this.findOnlyLike.execute(likeDTO);
+
 			return res.status(200).json({ data: res });
 		} catch (error: unknown) {
 			next(error);

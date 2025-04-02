@@ -14,7 +14,7 @@ model User {
   password     String
   admin        Boolean   @default(false)
   createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @default(now()) @updatedAt
+  updatedAt    DateTime  @default(now())
   image_perfil String?
   image_cover  String?
   bio          String?   @db.VarChar(100)

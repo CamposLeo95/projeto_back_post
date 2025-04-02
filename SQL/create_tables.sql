@@ -1,11 +1,11 @@
 CREATE TABLE users (
-	id SERIAL PRIMARY KEY,
-	email VARCHAR(100) NOT NULL UNIQUE,
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(100) NOT NULL UNIQUE,
 	name VARCHAR(100) NOT NULL,
 	password TEXT,
 	admin BOOLEAN DEFAULT false,
 	created_at TIMESTAMP DEFAULT NOW(),
-	updated_at TIMESTAMP DEFAULT NOW()
+	updated_at TIMESTAMP DEFAULT NOW(),
 	image_perfil TEXT,
 	image_cover TEXT,
 	bio VARCHAR(100)
@@ -19,6 +19,7 @@ CREATE TABLE posts(
 	created_at TIMESTAMP DEFAULT NOW(),
 	FOREIGN KEY (id_user) REFERENCES users(id) ON DELETE CASCADE
 )
+
 
 CREATE TABLE comments (
 	id SERIAL PRIMARY KEY,

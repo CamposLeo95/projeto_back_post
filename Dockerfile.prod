@@ -13,4 +13,4 @@ RUN npm run build
 
 EXPOSE 3333
 
-CMD ["npm", "run", "start"]
+CMD ["sh", "-c", " npx prisma db pull && npx prisma generate && node dist/server.js"]

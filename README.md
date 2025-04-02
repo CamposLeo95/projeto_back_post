@@ -7,11 +7,11 @@ Back End da aplicação rede social. Projeto desenvolvido como laboratório de e
 
 ## 📚 Estudos Implementados
 
-[✅] - Implementacao de arquitetura limpa (Clean Code)
-[✅] - Arquiteturação de banco de dados SQL 
-[✅] - Injeção de dependencia
-[✅] - Docker
-[🔄️] - Testes automatizados
+- [✅] Implementacao de arquitetura limpa (Clean Code)
+- [✅] Arquiteturação de banco de dados SQL 
+- [✅] Injeção de dependencia
+- [✅] Docker
+- [🔄️] Testes automatizados
 
 
 ## ⚙️ Tecnologias Utilizadas

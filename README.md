@@ -10,8 +10,11 @@ Back End da aplicação rede social. Projeto desenvolvido como laboratório de e
 - [✅] Implementacao de arquitetura limpa (Clean Code)
 - [✅] Arquiteturação de banco de dados SQL 
 - [✅] Injeção de dependencia
+- [✅] Criar bucket na cloud
+- [✅] Enviar essas imagens para o bucket
 - [✅] Docker
 - [🔄️] Testes automatizados
+- [🔄️] Cloud (GCP) - Cloud run
 
 
 ## ⚙️ Tecnologias Utilizadas

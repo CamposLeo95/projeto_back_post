@@ -3,9 +3,9 @@ import { CreateUserUseCase } from "../../../../domain/useCases/user/create-user.
 import { AppError } from "../../../../shared/exceptions/AppError";
 import { hashPassword } from "../../../../shared/utils/bcryptPassword";
 
-// Mock representa um objeto que voce nao quer que rode com a funcao normal mas que execute com lkum resultado determinado
+// Mock representa um objeto que voce nao quer que tenha uma retorno normal, mas que voce possa manipular
 
-// Nesse exemplo estamos determinando que a funcao sera o retorno de uma funcao Mocked
+// Determinando que o retorno da funcao sera um mocked
 jest.mock("../../../../shared/utils/bcryptPassword", () => ({
 	hashPassword: jest.fn() as jest.MockedFunction<typeof hashPassword>, // Tipando corretamente como jest.MockedFunction
 }));
@@ -42,8 +42,9 @@ describe("create-user-usecase", () => {
 
 		await createUserUseCase.execute(userInputDTO);
 
-		// Aqui ele sabe que tem que ter uma funcao dentro do createUserUseCase que sera a hashPassword entao no seu codigo original voce precisara ter essa funcao
+		// Verificando se a funcao foi chamada com os dados enviados pelo cliente
 		expect(hashPassword).toHaveBeenCalledWith("123456");
+		// Verificando se o hash da senha foi executado
 		expect(userRepo.create).toHaveBeenCalledWith({
 			...userInputDTO,
 			password: "hashed_password",

@@ -61,7 +61,7 @@ export class PrismaLikeRepository implements LikeRepository {
 				},
 			});
 		} catch (error) {
-			console.error("Erro ao buscar like no banco de dados", likeInputDTO);
+			console.error("Erro ao buscar like no banco de dados", error);
 			throw new Error(`${error}`);
 		}
 	}

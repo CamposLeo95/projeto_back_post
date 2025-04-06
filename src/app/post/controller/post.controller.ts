@@ -25,7 +25,8 @@ export class PostController {
 	async create(req: Request, res: Response, next: NextFunction) {
 		const file = req.file;
 		let imagePath = "";
-		if (file) {
+		console.log("file", file);
+		if (file && file?.originalname !== "undefined") {
 			imagePath = (await uploadPostsToGCS(file, "posts")) || "";
 		}
 		try {

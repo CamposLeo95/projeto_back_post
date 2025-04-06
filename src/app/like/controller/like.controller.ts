@@ -3,7 +3,6 @@ import type { NextFunction, Request, Response } from "express";
 import type { FindAllLikesByPostIdUseCase } from "../../../domain/useCases/like/find-all-likes-by-post-id.usecase";
 import type { FindOnlyLikeUseCase } from "../../../domain/useCases/like/find-only-like.usecase";
 import type { ToggleLikeUseCase } from "../../../domain/useCases/like/toggle-like.usecase";
-import { AppError } from "../../../shared/exceptions/AppError";
 import decodeJwtToUserId from "../../../shared/utils/decodeJwt";
 import type { ILikeInputDTO, ILikesInputByPost } from "../dtos/like.dto";
 
@@ -42,16 +41,16 @@ class LikeController {
 		}
 	}
 
-	async findOnly(req: Request, _res: Response, next: NextFunction) {
+	async findOnly(req: Request, res: Response, next: NextFunction) {
 		try {
 			const id_post = Number(req.params.idPost);
 			const id_user = Number(req.params.idUser);
 
 			const likeDTO = { id_user, id_post };
 
-			const res = await this.findOnlyLike.execute(likeDTO);
+			const response = await this.findOnlyLike.execute(likeDTO);
 
-			return res.status(200).json({ data: res });
+			return res.status(200).json({ data: response });
 		} catch (error: unknown) {
 			next(error);
 		}

@@ -9,7 +9,6 @@ export class FindAllLikesByPostIdUseCase {
 		try {
 			const { id_post } = likeInputDTO;
 			if (!id_post) throw new AppError("O ID do post é obrigatorio!", 400);
-			console.log(likeInputDTO);
 			const response = await this.repo.findAllLikesByPostId(likeInputDTO);
 			return response;
 		} catch (error: unknown) {
